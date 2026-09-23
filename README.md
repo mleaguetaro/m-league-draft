@@ -9,17 +9,18 @@
 - チーム4人の合計、ポイント差、前回更新比の自動計算
 - 将来メンバーを変更しやすい `memberIds` ベースのデータ構造
 - POINTでチーム合計と選手別の累積ポイントを折れ線グラフ表示。選手は複数選択可能
-- SETTINGSで8選手の累積ポイント履歴を日付ごとに入力・修正・削除
+- SETTINGSで1試合・1選手ずつ累積ポイントを入力・修正・削除。日付、第1/第2試合、A/B卓を記録し、連闘も別々に扱う
 - PLAYERSで[Mリーグ公式Stats](https://m-league.jp/stats/)から取得した8選手の現在成績と、カードから開く18項目の詳細
 - COMPAREで任意の2選手を選び、公式成績の10項目を数値と棒グラフで比較
 - RECORDSで最高到達ポイント、最大ポイント差、両チームの最大リード、チーム内最多ポイント選手、直近5件のポイント変動を履歴から計算
 - KUSUNOKI（赤）とKISHIMOTO（青）の表示、Mリーグ公式サイトのアイコンと選手写真
 - SETTINGSで端末の画像ファイルからチーム写真を選択・削除
 - SETTINGSでチーム名・カラー・写真を変更し、HOME、POINT、PLAYERS、COMPARE、RECORDSへ反映
-- GitHub Actionsで公式Stats取得、8選手の検証、JSONとポイント履歴の更新、GitHub Pagesへの公開を自動実行
+- GitHub Actionsで公式Statsと[日程・結果](https://m-league.jp/games/)を取得し、試合ごとのJSONとポイント履歴を更新してGitHub Pagesへ公開
 - Supabaseを設定するとチーム設定・写真・手入力履歴を端末間で共有。閲覧は公開、変更は管理者だけに制限
+- 管理者ログイン後、SETTINGSで現在のパスワードを使って管理者パスワードを変更可能
 
-**公開URLとSupabaseの設定は、GitHubリポジトリとSupabaseプロジェクトを作成した後に有効になります。** 未設定の間、公式ポイント履歴は共通のJSONを使いますが、チーム設定・写真・手入力履歴はこの端末だけの保存です。画面上部に共有未設定と表示します。
+公開先は [GitHub Pages](https://mleaguetaro.github.io/m-league-draft/) です。Supabaseを設定した公開サイトではチーム設定・写真・手入力履歴を共有します。ローカルでSupabaseを設定していない場合は、この端末だけに保存します。
 
 ## ローカル起動
 
@@ -59,7 +60,7 @@ npm.cmd run preview
 
 合計は `src/lib/score.js` が各チームの `memberIds` を使って計算します。データが欠けたときは誤った合計を出さず、画面に `—` を表示します。公式成績は `src/data/officialStats.json` に保存し、選手IDを初期データと共通にして取得日時と出典を記録します。
 
-公式ポイント履歴は `src/data/officialHistory.json` に保存します。8人全員の累積ポイントに加え、将来使えるよう全Statsを `statsByPlayer` に保存します。手入力履歴は `src/lib/history.js` で処理します。HOME、POINT、RECORDSは公式履歴と手入力履歴を日付順に統合し、同じ日・同じ8人のポイントは重複表示しません。RECORDSの集計は `src/lib/records.js` にあります。
+公式ポイント履歴は `src/data/officialHistory.json` に保存します。各試合のID、日付、回戦、卓、対象選手の獲得ポイントと試合後の累積ポイントを持ちます。`statsByPlayer` は将来の成績履歴用に残します。手入力履歴は1選手・1試合の累積ポイントを `src/lib/history.js` で処理します。同一回戦のA/B卓は同時開催として合算後にチーム推移へ反映し、同じ選手の第1/第2試合は別記録です。手入力行の回戦と卓は既存Supabaseテーブルの `order_number` に10/11/20/21として保存するため、DB移行は不要です。RECORDSの集計は `src/lib/records.js` にあります。
 
 チーム名・カラーは `src/lib/teamSettings.js` で検証します。初期値はKUSUNOKI（赤）とKISHIMOTO（青）です。Supabase未設定時だけ端末のIndexedDBに保存します。Supabase設定後は `src/lib/sharedData.js` が共有データを読み書きします。
 
@@ -78,7 +79,7 @@ py scripts\update_official_history.py
 npm.cmd run build
 ```
 
-`py` が使えない環境では `python` に置き換えてください。公式ページの対象8選手と18項目がそろった場合だけStatsのJSONを更新します。続いて、8人のポイントが前回から変わった場合だけ公式履歴に追加します。同じ日・同じ8人のポイントは重複保存しません。取得や解析に失敗した場合は既存JSONを保持します。
+`py` が使えない環境では `python` に置き換えてください。公式Statsの対象8選手と18項目がそろった場合だけStatsのJSONを更新します。続いて公式の[日程・結果](https://m-league.jp/games/)から各試合のID・出場選手・獲得ポイントを取得し、累積値と試合数がStatsに一致した場合だけ公式履歴を更新します。取得や解析、照合に失敗した場合は既存の履歴を保持します。公式結果の公開前やStatsとの更新時差があると、次回の自動実行まで履歴更新を待ちます。
 
 取得処理の確認は `py -m unittest discover -s scripts -p 'test_*.py'` で実行できます。
 
@@ -103,4 +104,4 @@ Supabaseを設定すると、一般閲覧者は同じチーム設定・写真・
 3. Settings → Actions → General → Workflow permissions で **Read and write permissions** を選びます。自動更新したJSONをコミットするために必要です。
 4. `main` へのpushで `.github/workflows/update-and-deploy.yml` がビルドして公開します。Actionsの **Run workflow** でも手動で再公開できます。手動で公式Statsも取得する場合は `refresh_stats` を選びます。
 
-ワークフローは毎日 **01:30 JST** に公式Statsを取得し、8選手のJSONと公式ポイント履歴を更新して公開します。チーム合計はアプリ内で自動計算します。取得に失敗した場合はデプロイを中止し、公開済みのデータを残します。GitHub Pagesは静的サイトなので、手入力履歴とチーム設定の共有には上記のSupabaseが必要です。`vite.config.js` の `base: './'` はリポジトリ名を含む公開URLに対応しています。
+ワークフローは毎日 **01:30 JST** と、月・火・木・金の試合日に **20:30 / 22:30 / 翌00:30 JST** に公式データを確認します。公開済みの試合結果を試合IDで取り込み、チーム合計はアプリ内で自動計算します。取得に失敗した場合はデプロイを中止し、公開済みのデータを残します。GitHub Pagesは静的サイトなので、手入力履歴とチーム設定の共有には上記のSupabaseが必要です。`vite.config.js` の `base: './'` はリポジトリ名を含む公開URLに対応しています。
