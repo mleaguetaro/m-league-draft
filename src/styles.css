@@ -208,6 +208,10 @@ h1, h2, h3, p { margin-top: 0; }
 .admin-access button { min-height: 40px; border: 0; border-radius: 3px; padding: 0 17px; color: #fff; background: var(--league-green); font-size: 12px; font-weight: 900; cursor: pointer; }
 .admin-access__authorized { display: flex; align-items: center; gap: 16px; color: var(--league-green); font-size: 12px; font-weight: 900; }
 .admin-access p.admin-access__error { margin: 12px 0 0; color: #b32c2c; }
+.admin-access__password { margin-top: 14px; border-top: 1px solid #e1e8e2; padding-top: 12px; }
+.admin-access__password summary { width: fit-content; color: var(--league-green); font-size: 12px; font-weight: 900; cursor: pointer; }
+.admin-access__password form { margin-top: 14px; }
+.admin-access p.admin-access__success { margin: 12px 0 0; color: var(--league-green); font-weight: 800; }
 .photo-settings { border-top: 4px solid var(--league-green); padding: 23px 0; }
 .photo-settings h2 { margin: 0 0 18px; font-size: 23px; font-weight: 900; }
 .photo-settings__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -248,6 +252,10 @@ h1, h2, h3, p { margin-top: 0; }
 .history-settings__hint { margin: 10px 0 17px; }
 .history-settings__note { margin: 17px 0 0; }
 .history-form { border: 1px solid #e0e6e0; border-radius: 8px; padding: 20px; background: #f8faf8; }
+.history-form__fields { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; gap: 12px; }
+.history-form__fields > label { display: grid; gap: 7px; min-width: 0; font-size: 12px; font-weight: 900; }
+.history-form__fields input, .history-form__fields select { width: 100%; min-height: 40px; border: 1px solid #cbd6cd; border-radius: 3px; padding: 7px 9px; color: var(--ink); background: #fff; font-size: 16px; }
+.history-form__fields .history-form__point-input input { width: 100%; }
 .history-form__date { display: flex; flex-direction: column; gap: 7px; width: min(240px, 100%); margin-bottom: 20px; font-size: 12px; font-weight: 900; }
 .history-form__date input, .history-form__point-input input { min-height: 39px; border: 1px solid #cbd6cd; border-radius: 3px; padding: 8px 10px; color: var(--ink); background: #fff; font-size: 16px; }
 .history-form__date input:focus, .history-form__point-input input:focus { outline: 2px solid var(--league-green); outline-offset: 1px; }
@@ -267,7 +275,7 @@ h1, h2, h3, p { margin-top: 0; }
 .history-list { margin-top: 28px; }
 .history-list h3 { margin: 0 0 11px; font-size: 18px; font-weight: 900; }
 .history-list h3 small { margin-left: 5px; color: #738075; font-size: 12px; }
-.history-list__item { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 12px; border-top: 1px solid #e3e9e3; padding: 14px 0; }
+.history-list__item { display: grid; grid-template-columns: 190px 1fr auto; align-items: center; gap: 12px; border-top: 1px solid #e3e9e3; padding: 14px 0; }
 .history-list__item time { font-size: 13px; font-weight: 900; font-variant-numeric: tabular-nums; }
 .history-list__totals { display: flex; flex-wrap: wrap; gap: 6px 17px; font-size: 11px; font-weight: 800; }
 .history-list__totals strong { margin-left: 3px; font-variant-numeric: tabular-nums; }
@@ -281,6 +289,7 @@ h1, h2, h3, p { margin-top: 0; }
 
 
 @media (max-width: 960px) {
+  .history-form__fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .site-header { grid-template-columns: 1fr auto; min-height: 68px; }
   .site-header__season { grid-column: 2; grid-row: 1; }
   .navigation { position: fixed; z-index: 30; right: 5px; bottom: 5px; left: 5px; width: calc(100% - 10px); justify-self: stretch; border-top: 1px solid #dedede; background: #fffffff5; box-shadow: 0 -4px 16px #0000001a; backdrop-filter: blur(12px); }
@@ -360,6 +369,8 @@ h1, h2, h3, p { margin-top: 0; }
   .chart-frame { height: 270px; }
   .player-picks { grid-template-columns: 1fr; }
   .history-form { padding: 14px; }
+  .history-form__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .history-form__fields > label:first-child, .history-form__fields > label:nth-child(4) { grid-column: 1 / -1; }
   .history-form__teams { grid-template-columns: 1fr; }
   .history-list__item { grid-template-columns: 1fr auto; }
   .history-list__totals { grid-column: 1 / -1; grid-row: 2; }

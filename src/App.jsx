@@ -6,7 +6,7 @@ import { getMatchup } from './lib/score.js';
 import { deleteManualSnapshot, getCombinedSnapshots, getActiveSnapshots, loadManualSnapshots, saveManualSnapshot } from './lib/history.js';
 import { loadTeamPhotos, prepareTeamPhoto, removeTeamPhoto, saveTeamPhoto } from './lib/teamPhotos.js';
 import { loadTeamSettings, saveTeamSettings } from './lib/teamSettings.js';
-import { checkAdmin, deleteSharedSnapshot, loadSharedData, removeSharedTeamPhoto, saveSharedSnapshot, saveSharedTeamSettings, sharedEnabled, signInAdmin, signOutAdmin, supabase, uploadSharedTeamPhoto } from './lib/sharedData.js';
+import { changeAdminPassword, checkAdmin, deleteSharedSnapshot, loadSharedData, removeSharedTeamPhoto, saveSharedSnapshot, saveSharedTeamSettings, sharedEnabled, signInAdmin, signOutAdmin, supabase, uploadSharedTeamPhoto } from './lib/sharedData.js';
 import HistorySettings from './components/HistorySettings.jsx';
 import TeamSettings from './components/TeamSettings.jsx';
 import AdminAccess from './components/AdminAccess.jsx';
@@ -146,7 +146,7 @@ function TeamRoster({ team, photo, players, latest, previous, total }) {
 
 function Home({ seasonData, teamPhotos, historyMode }) {
   const matchup = getMatchup(seasonData);
-  const updatedAt = matchup.latest?.source === 'official' && officialStats.season === seasonData.id ? officialStats.fetchedAt : matchup.latest?.recordedAt;
+  const updatedAt = matchup.latest?.source?.startsWith('official') && officialStats.season === seasonData.id ? officialStats.fetchedAt : matchup.latest?.recordedAt;
   const [teamA, teamB] = seasonData.teams;
   const leader = seasonData.teams.find((team) => team.id === matchup.leaderId);
   const gap = matchup.gap;
@@ -184,12 +184,12 @@ function Home({ seasonData, teamPhotos, historyMode }) {
   </>;
 }
 
-function Settings({ seasonData, teamPhotos, onPhotoSelected, onPhotoRemoved, photoBusy, photoError, manualSnapshots, onHistorySave, onHistoryDelete, historyError, onTeamSave, teamSettingsError, sharedMode, canEdit, checkingAuth, onLogin, onLogout, authError }) {
+function Settings({ seasonData, teamPhotos, onPhotoSelected, onPhotoRemoved, photoBusy, photoError, manualSnapshots, onHistorySave, onHistoryDelete, historyError, onTeamSave, teamSettingsError, sharedMode, canEdit, checkingAuth, onLogin, onLogout, onChangePassword, authError }) {
   return <>
     <div className="page-intro">
       <div><p className="eyebrow eyebrow--accent">TEAM SETTINGS</p><h1>設定</h1></div>
     </div>
-    {sharedMode && <AdminAccess authorized={canEdit} checking={checkingAuth} onLogin={onLogin} onLogout={onLogout} error={authError} />}
+    {sharedMode && <AdminAccess authorized={canEdit} checking={checkingAuth} onLogin={onLogin} onLogout={onLogout} onChangePassword={onChangePassword} error={authError} />}
     <TeamSettings teams={seasonData.teams} onSave={onTeamSave} loadError={teamSettingsError} editable={canEdit} sharedMode={sharedMode} />
     <section className="photo-settings" aria-labelledby="photo-settings-title">
       <h2 id="photo-settings-title">チーム写真</h2>
@@ -384,7 +384,7 @@ export default function App() {
   const officialSnapshots = officialHistory.season === season.id ? officialHistory.snapshots : [];
   const historyMode = officialSnapshots.length && manualSnapshots.length ? 'mixed' : officialSnapshots.length ? 'official' : manualSnapshots.length ? 'manual' : 'demo';
   const teams = season.teams.map((team) => ({ ...team, ...teamSettings.find((item) => item.id === team.id) }));
-  const seasonData = { ...season, teams, snapshots: getCombinedSnapshots(season.snapshots, officialSnapshots, manualSnapshots) };
+  const seasonData = { ...season, teams, snapshots: getCombinedSnapshots(season.snapshots, officialSnapshots, manualSnapshots, Object.keys(season.players)) };
 
   return <div className="app-shell">
     <Header activeTab={activeTab} />
@@ -401,7 +401,7 @@ export default function App() {
         : activeTab === 'records'
           ? <Suspense fallback={<div className="chart-loading">記録を読み込み中…</div>}><Records seasonData={seasonData} historyMode={historyMode} /></Suspense>
         : activeTab === 'settings'
-          ? <Settings seasonData={seasonData} teamPhotos={teamPhotos} onPhotoSelected={handlePhotoSelected} onPhotoRemoved={handlePhotoRemoved} photoBusy={photoBusy} photoError={photoError} manualSnapshots={manualSnapshots} onHistorySave={handleHistorySave} onHistoryDelete={handleHistoryDelete} historyError={historyError} onTeamSave={handleTeamSave} teamSettingsError={teamSettingsError} sharedMode={sharedEnabled} canEdit={canEdit} checkingAuth={checkingAuth} onLogin={handleLogin} onLogout={handleLogout} authError={authError} />
+          ? <Settings seasonData={seasonData} teamPhotos={teamPhotos} onPhotoSelected={handlePhotoSelected} onPhotoRemoved={handlePhotoRemoved} photoBusy={photoBusy} photoError={photoError} manualSnapshots={manualSnapshots} onHistorySave={handleHistorySave} onHistoryDelete={handleHistoryDelete} historyError={historyError} onTeamSave={handleTeamSave} teamSettingsError={teamSettingsError} sharedMode={sharedEnabled} canEdit={canEdit} checkingAuth={checkingAuth} onLogin={handleLogin} onLogout={handleLogout} onChangePassword={changeAdminPassword} authError={authError} />
           : null}
     </main>
     <footer className="site-footer"><span>M.LEAGUE DRAFT</span><span>2026–27 · {historyMode.toUpperCase()}</span></footer>
