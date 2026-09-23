@@ -285,9 +285,9 @@ export default function App() {
     }).catch(() => {
       if (active) setSharingError('共有データを読み込めません。接続を確認して再読み込みしてください。');
     }).finally(() => { if (active) setSharingLoading(false); });
-    supabase.auth.getUser().then(async ({ data, error }) => {
+    supabase.auth.getSession().then(async ({ data, error }) => {
       if (error) throw error;
-      const authorized = data.user ? await checkAdmin() : false;
+      const authorized = data.session ? await checkAdmin() : false;
       if (active) setCanEdit(authorized);
     }).catch(() => {
       if (active) setAuthError('ログイン状態を確認できませんでした。');
