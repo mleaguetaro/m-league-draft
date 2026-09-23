@@ -17,11 +17,11 @@ const season = {
 
 test('履歴から最高到達点・両チームの最大リード・直近変動を算出する', () => {
   const result = getRecords(season);
-  assert.deepEqual(result.highest.a, { value: 30, date: '2026-09-02' });
-  assert.deepEqual(result.highest.b, { value: 15, date: '2026-09-03' });
-  assert.deepEqual(result.maxGap, { value: 35, date: '2026-09-02', leaderId: 'a' });
-  assert.deepEqual(result.maxLead.a, { value: 35, date: '2026-09-02' });
-  assert.deepEqual(result.maxLead.b, { value: 20, date: '2026-09-01' });
+  assert.deepEqual(result.highest.a, { value: 30, date: '2026-09-02', label: '2026-09-02' });
+  assert.deepEqual(result.highest.b, { value: 15, date: '2026-09-03', label: '2026-09-03' });
+  assert.deepEqual(result.maxGap, { value: 35, date: '2026-09-02', label: '2026-09-02', leaderId: 'a' });
+  assert.deepEqual(result.maxLead.a, { value: 35, date: '2026-09-02', label: '2026-09-02' });
+  assert.deepEqual(result.maxLead.b, { value: 20, date: '2026-09-01', label: '2026-09-01' });
   assert.deepEqual(result.topPlayers.a, { id: 'p1', name: 'A1', point: 15 });
   assert.deepEqual(result.recentChanges.map((item) => item.changes.a), [-20, 60, null]);
 });

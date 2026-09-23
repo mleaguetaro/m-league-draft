@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { season } from '../data/demoSeason.js';
 import { getMatchup } from './score.js';
-import { getActiveSnapshots, getCombinedSnapshots, getPlayerChartRows, getTeamChartRows, isDuplicateSnapshot, makeManualSnapshot } from './history.js';
+import { findManualPlayerEntry, getActiveSnapshots, getCombinedSnapshots, getPlayerChartRows, getTeamChartRows, isDuplicateSnapshot, makeManualPlayerSnapshot, makeManualSnapshot } from './history.js';
 
 const playerIds = Object.keys(season.players);
 
@@ -43,9 +43,37 @@ test('公式と手入力の履歴を統合し、同日・同ポイントの重�
   const official = { id: 'official-1', date: '2026-09-23', recordedAt: '2026-09-23T12:00:00Z', source: 'official', pointsByPlayer: values };
   const duplicate = { ...official, id: 'manual-duplicate', source: 'manual' };
   const changed = { ...official, id: 'manual-changed', recordedAt: '2026-09-23T15:00:00Z', source: 'manual', pointsByPlayer: { ...values, date: 30 } };
-  assert.deepEqual(getCombinedSnapshots(season.snapshots, [official], [changed, duplicate]).map((item) => item.id), ['manual-changed', 'official-1']);
+  assert.deepEqual(getCombinedSnapshots(season.snapshots, [official], [changed, duplicate]).map((item) => item.id), ['official-1', 'manual-changed']);
   assert.deepEqual(getCombinedSnapshots(season.snapshots, [], []).map((item) => item.id), season.snapshots.map((item) => item.id));
   const sameDayManual = { ...changed, recordedAt: '2026-09-23T23:59:00+09:00' };
   const combined = getCombinedSnapshots([], [official], [sameDayManual]);
-  assert.equal(getMatchup({ ...season, snapshots: combined }).latest.id, official.id);
+  assert.equal(getMatchup({ ...season, snapshots: combined }).latest.id, sameDayManual.id);
+});
+
+test('1人ずつ入力し、2卓と同じ選手の連闘を別の試合として記録する', () => {
+  const first = makeManualPlayerSnapshot('2026-09-21', 'date', 20, 1, 'A');
+  const otherTable = makeManualPlayerSnapshot('2026-09-21', 'sasaki', -10, 1, 'B');
+  const repeat = makeManualPlayerSnapshot('2026-09-21', 'date', 35, 2, 'A');
+  const sameGame = makeManualPlayerSnapshot('2026-09-21', 'watanabe', 5, 1, 'A');
+  const snapshots = getCombinedSnapshots([], [], [repeat, sameGame, otherTable, first], playerIds);
+  assert.equal(snapshots.length, 2);
+  assert.deepEqual(snapshots.map((item) => [item.round, item.table]), [[1, 'A+B'], [2, 'A']]);
+  assert.equal(snapshots[0].pointsByPlayer.date, 20);
+  assert.equal(snapshots[0].pointsByPlayer.watanabe, 5);
+  assert.equal(snapshots[0].pointsByPlayer.sasaki, -10);
+  assert.equal(snapshots[1].pointsByPlayer.date, 35);
+  assert.equal(getMatchup({ ...season, snapshots }).latest.pointsByPlayer.date, 35);
+  assert.equal(findManualPlayerEntry(makeManualPlayerSnapshot('2026-09-21', 'date', 21, 1, 'A'), [first]), first);
+  assert.equal(findManualPlayerEntry(repeat, [first]), undefined);
+});
+
+test('同時開催の2卓は両方の結果がそろってからチーム差を記録する', () => {
+  const base = Object.fromEntries(playerIds.map((id) => [id, 0]));
+  const a = { id: 'game-a', date: '2026-09-21', recordedAt: '2026-09-21T00:00:00+09:00', round: 1, table: 'A', source: 'official-game', gamePointsByPlayer: { date: 100 }, pointsByPlayer: { ...base, date: 100 } };
+  const b = { id: 'game-b', date: '2026-09-21', recordedAt: '2026-09-21T00:00:00+09:00', round: 1, table: 'B', source: 'official-game', gamePointsByPlayer: { sasaki: 100 }, pointsByPlayer: { ...base, date: 100, sasaki: 100 } };
+  const merged = getCombinedSnapshots([], [a, b], [], playerIds);
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0].table, 'A+B');
+  assert.equal(getMatchup({ ...season, snapshots: merged }).gap, 0);
+  assert.deepEqual(merged[0].gameEntries.map((item) => item.table), ['A', 'B']);
 });

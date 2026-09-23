@@ -24,6 +24,8 @@ export async function loadSharedData() {
     manualSnapshots: history.data.map((row) => ({
       id: row.id, date: row.date, recordedAt: row.recorded_at, createdAt: row.created_at,
       order: row.order_number, source: row.source, pointsByPlayer: row.points_by_player, statsByPlayer: row.stats_by_player,
+      round: [10, 11, 20, 21].includes(row.order_number) ? Math.floor(row.order_number / 10) : undefined,
+      table: [10, 11, 20, 21].includes(row.order_number) ? (row.order_number % 10 ? 'B' : 'A') : undefined,
     })),
   };
 }
@@ -45,6 +47,16 @@ export async function signInAdmin(email, password) {
 
 export async function signOutAdmin() {
   const { error } = await supabase.auth.signOut();
+  check(error);
+}
+
+export async function changeAdminPassword(currentPassword, newPassword) {
+  if (!supabase) throw new Error('共有保存が設定されていません。');
+  if (!await checkAdmin()) throw new Error('管理者ログインが必要です。');
+  const { error } = await supabase.auth.updateUser({
+    password: newPassword,
+    current_password: currentPassword,
+  });
   check(error);
 }
 

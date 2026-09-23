@@ -1,4 +1,5 @@
 import { getLatestSnapshots, getTeamTotal } from './score.js';
+import { snapshotLabel } from './history.js';
 
 const round = (value) => Math.round(value * 10) / 10;
 
@@ -8,6 +9,7 @@ export function getRecords(seasonData) {
   const rows = ordered.map((snapshot) => ({
     snapshot,
     date: snapshot.date || snapshot.recordedAt?.slice(0, 10) || '',
+    label: snapshotLabel(snapshot),
     totals: {
       [teamA.id]: getTeamTotal(teamA, snapshot),
       [teamB.id]: getTeamTotal(teamB, snapshot),
@@ -21,7 +23,7 @@ export function getRecords(seasonData) {
     for (const team of seasonData.teams) {
       const value = row.totals[team.id];
       if (value !== null && (!highest[team.id] || value > highest[team.id].value)) {
-        highest[team.id] = { value, date: row.date };
+        highest[team.id] = { value, date: row.date, label: row.label };
       }
     }
     const a = row.totals[teamA.id];
@@ -29,9 +31,9 @@ export function getRecords(seasonData) {
     if (a === null || b === null) continue;
     const difference = round(a - b);
     const gap = Math.abs(difference);
-    if (!maxGap || gap > maxGap.value) maxGap = { value: gap, date: row.date, leaderId: difference > 0 ? teamA.id : difference < 0 ? teamB.id : null };
-    if (difference > 0 && (!maxLead[teamA.id] || difference > maxLead[teamA.id].value)) maxLead[teamA.id] = { value: difference, date: row.date };
-    if (difference < 0 && (!maxLead[teamB.id] || -difference > maxLead[teamB.id].value)) maxLead[teamB.id] = { value: -difference, date: row.date };
+    if (!maxGap || gap > maxGap.value) maxGap = { value: gap, date: row.date, label: row.label, leaderId: difference > 0 ? teamA.id : difference < 0 ? teamB.id : null };
+    if (difference > 0 && (!maxLead[teamA.id] || difference > maxLead[teamA.id].value)) maxLead[teamA.id] = { value: difference, date: row.date, label: row.label };
+    if (difference < 0 && (!maxLead[teamB.id] || -difference > maxLead[teamB.id].value)) maxLead[teamB.id] = { value: -difference, date: row.date, label: row.label };
   }
 
   const latest = rows.at(-1)?.snapshot;
@@ -47,6 +49,7 @@ export function getRecords(seasonData) {
     const previous = rows[index - 1];
     return {
       date: row.date,
+      label: row.label,
       id: row.snapshot.id,
       totals: row.totals,
       changes: Object.fromEntries(seasonData.teams.map((team) => {

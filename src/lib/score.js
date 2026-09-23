@@ -1,12 +1,16 @@
+export function compareSnapshots(a, b) {
+  const dayA = a.date || a.recordedAt?.slice(0, 10) || '';
+  const dayB = b.date || b.recordedAt?.slice(0, 10) || '';
+  return dayA.localeCompare(dayB) ||
+    (a.round ?? 3) - (b.round ?? 3) ||
+    String(a.table || '').localeCompare(String(b.table || '')) ||
+    Date.parse(a.recordedAt || a.createdAt) - Date.parse(b.recordedAt || b.createdAt) ||
+    (a.order ?? 0) - (b.order ?? 0) ||
+    (a.source === 'official-game' || a.source === 'official' ? 1 : 0) - (b.source === 'official-game' || b.source === 'official' ? 1 : 0);
+}
+
 export function getLatestSnapshots(snapshots) {
-  return [...snapshots].sort((a, b) => {
-    const dayA = a.date || a.recordedAt.slice(0, 10);
-    const dayB = b.date || b.recordedAt.slice(0, 10);
-    return dayB.localeCompare(dayA) ||
-    (a.source === 'official' && b.source !== 'official' ? -1 : b.source === 'official' && a.source !== 'official' ? 1 : 0) ||
-    Date.parse(b.recordedAt) - Date.parse(a.recordedAt) ||
-    (b.order ?? Date.parse(b.createdAt || b.recordedAt)) - (a.order ?? Date.parse(a.createdAt || a.recordedAt));
-  });
+  return [...snapshots].sort((a, b) => compareSnapshots(b, a));
 }
 
 export function getTeamTotal(team, snapshot) {
