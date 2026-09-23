@@ -26,7 +26,7 @@ function ChartFrame({ children, label }) {
 function chartParts() {
   return [
     <CartesianGrid key="grid" stroke="#e9eeea" strokeDasharray="3 4" vertical={false} />,
-    <XAxis key="x" dataKey="day" tickFormatter={shortDate} tick={{ fill: '#69736b', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#d6ded8' }} minTickGap={18} />,
+    <XAxis key="x" dataKey="label" tickFormatter={shortDate} tick={{ fill: '#69736b', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#d6ded8' }} minTickGap={18} />,
     <YAxis key="y" tick={{ fill: '#69736b', fontSize: 10 }} tickLine={false} axisLine={false} width={45} tickFormatter={(value) => Number(value).toFixed(0)} />,
     <Tooltip key="tooltip" formatter={formatTooltip} labelFormatter={(date) => date} contentStyle={{ border: '1px solid #dce3dd', borderRadius: 6, fontSize: 12 }} />,
     <ReferenceLine key="zero" y={0} stroke="#aab7ac" strokeDasharray="4 4" />,

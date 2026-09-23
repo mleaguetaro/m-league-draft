@@ -8,7 +8,7 @@ function RecordCard({ title, entry, team, absolute = false }) {
   return <div className="record-card" style={{ '--record-color': team?.color || 'var(--league-green)' }}>
     <span>{title}</span>
     <strong>{entry ? absolute ? `${entry.value.toFixed(1)} pt` : point(entry.value) : '—'}</strong>
-    <small>{entry ? date(entry.date) : '記録なし'}</small>
+    <small>{entry ? date(entry.label || entry.date) : '記録なし'}</small>
   </div>;
 }
 
@@ -53,7 +53,7 @@ export default function Records({ seasonData, historyMode }) {
       <h2 id="records-recent-title">直近のポイント変動</h2>
       <div className="record-recent">
         {records.recentChanges.length ? records.recentChanges.map((row) => <div className="record-recent__row" key={row.id}>
-          <time dateTime={row.date}>{date(row.date)}</time>
+          <time dateTime={row.date}>{date(row.label || row.date)}</time>
           {seasonData.teams.map((team) => <div key={team.id} style={{ '--record-color': team.color }}><span>{team.name}</span><strong>{row.changes[team.id] === null ? '初回' : point(row.changes[team.id])}</strong></div>)}
         </div>) : <p className="record-recent__empty">履歴を入力すると表示されます。</p>}
       </div>
