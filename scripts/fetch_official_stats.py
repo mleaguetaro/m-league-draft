@@ -173,6 +173,14 @@ def main(argv: list[str] | None = None) -> int:
         html = args.html_file.read_text(encoding="utf-8") if args.html_file else fetch_html()
         fetched_at = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
         data = parse_stats_html(html, fetched_at)
+        if args.output.exists():
+            try:
+                previous = json.loads(args.output.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                previous = None
+            if isinstance(previous, dict) and previous.get("season") == data["season"] and previous.get("players") == data["players"]:
+                print("Official Stats unchanged")
+                return 0
         atomic_write_json(args.output, data)
     except (OSError, requests.RequestException, StatsParseError, UnicodeError) as exc:
         print(f"Stats update failed; existing JSON kept: {exc}", file=sys.stderr)
