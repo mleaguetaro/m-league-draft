@@ -305,6 +305,76 @@
         "katsumata": 68.1
       },
       "statsByPlayer": {}
+    },
+    {
+      "id": "official-game-L001_S025_0008_01B",
+      "date": "2026-09-25",
+      "recordedAt": "2026-09-25T00:00:00+09:00",
+      "round": 1,
+      "table": "B",
+      "matchId": "L001_S025_0008_01B",
+      "source": "official-game",
+      "gamePointsByPlayer": {
+        "hori": 60.9,
+        "shimoishi": 5.9
+      },
+      "pointsByPlayer": {
+        "date": -102.6,
+        "watanabe": 11.7,
+        "hori": 57.2,
+        "shimoishi": 14.4,
+        "sasaki": 80.3,
+        "nakabayashi": -12.7,
+        "kurosawa": 6.3,
+        "katsumata": 68.1
+      },
+      "statsByPlayer": {}
+    },
+    {
+      "id": "official-game-L001_S025_0008_02A",
+      "date": "2026-09-25",
+      "recordedAt": "2026-09-25T00:00:00+09:00",
+      "round": 2,
+      "table": "A",
+      "matchId": "L001_S025_0008_02A",
+      "source": "official-game",
+      "gamePointsByPlayer": {
+        "nakabayashi": 5.5
+      },
+      "pointsByPlayer": {
+        "date": -102.6,
+        "watanabe": 11.7,
+        "hori": 57.2,
+        "shimoishi": 14.4,
+        "sasaki": 80.3,
+        "nakabayashi": -7.2,
+        "kurosawa": 6.3,
+        "katsumata": 68.1
+      },
+      "statsByPlayer": {}
+    },
+    {
+      "id": "official-game-L001_S025_0008_02B",
+      "date": "2026-09-25",
+      "recordedAt": "2026-09-25T00:00:00+09:00",
+      "round": 2,
+      "table": "B",
+      "matchId": "L001_S025_0008_02B",
+      "source": "official-game",
+      "gamePointsByPlayer": {
+        "katsumata": 9.5
+      },
+      "pointsByPlayer": {
+        "date": -102.6,
+        "watanabe": 11.7,
+        "hori": 57.2,
+        "shimoishi": 14.4,
+        "sasaki": 80.3,
+        "nakabayashi": -7.2,
+        "kurosawa": 6.3,
+        "katsumata": 77.6
+      },
+      "statsByPlayer": {}
     }
   ]
 }
