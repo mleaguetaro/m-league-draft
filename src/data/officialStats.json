@@ -1,7 +1,7 @@
 {
   "season": "2026-27",
   "sourceUrl": "https://m-league.jp/stats/",
-  "fetchedAt": "2026-10-15T14:10:49Z",
+  "fetchedAt": "2026-10-15T16:04:18Z",
   "players": {
     "date": {
       "id": "date",
@@ -168,24 +168,24 @@
       "id": "katsumata",
       "name": "勝又健志",
       "officialTeam": "EX風林火山",
-      "games": 6,
-      "rounds": 84,
-      "point": 9.5,
-      "averageRank": 2.33,
+      "games": 7,
+      "rounds": 96,
+      "point": 19.9,
+      "averageRank": 2.28,
       "firstPlaceCount": 1,
-      "secondPlaceCount": 3,
+      "secondPlaceCount": 4,
       "thirdPlaceCount": 1,
       "fourthPlaceCount": 1,
-      "topRate": 0.16,
-      "rentaiRate": 0.66,
-      "avoidLastRate": 0.83,
+      "topRate": 0.14,
+      "rentaiRate": 0.71,
+      "avoidLastRate": 0.85,
       "bestScore": 45300,
-      "averageScore": 7946.66,
-      "callRate": 0.22,
-      "reachRate": 0.17,
-      "winRate": 0.17,
-      "dealInRate": 0.1,
-      "averageDealIn": 6611.11
+      "averageScore": 7705.55,
+      "callRate": 0.26,
+      "reachRate": 0.18,
+      "winRate": 0.18,
+      "dealInRate": 0.13,
+      "averageDealIn": 5623.07
     }
   }
 }
