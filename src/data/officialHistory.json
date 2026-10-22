@@ -1191,6 +1191,30 @@
         "katsumata": 24.6
       },
       "statsByPlayer": {}
+    },
+    {
+      "id": "official-game-L001_S025_0023_01B",
+      "date": "2026-10-22",
+      "recordedAt": "2026-10-22T00:00:00+09:00",
+      "round": 1,
+      "table": "B",
+      "matchId": "L001_S025_0023_01B",
+      "source": "official-game",
+      "gamePointsByPlayer": {
+        "hori": 59.0,
+        "date": 12.2
+      },
+      "pointsByPlayer": {
+        "date": 7.6,
+        "watanabe": 229.9,
+        "hori": 25.2,
+        "shimoishi": 1.9,
+        "sasaki": 151.6,
+        "nakabayashi": -18.3,
+        "kurosawa": -94.2,
+        "katsumata": 24.6
+      },
+      "statsByPlayer": {}
     }
   ]
 }
