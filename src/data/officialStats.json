@@ -1,7 +1,7 @@
 {
   "season": "2026-27",
   "sourceUrl": "https://m-league.jp/stats/",
-  "fetchedAt": "2026-10-22T16:05:13Z",
+  "fetchedAt": "2026-10-23T12:01:11Z",
   "players": {
     "date": {
       "id": "date",
@@ -135,7 +135,7 @@
       "avoidLastRate": 0.88,
       "bestScore": 48700,
       "averageScore": 5623.52,
-      "callRate": 0.24,
+      "callRate": 0.25,
       "reachRate": 0.23,
       "winRate": 0.15,
       "dealInRate": 0.07,
